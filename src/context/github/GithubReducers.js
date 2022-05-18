@@ -7,6 +7,12 @@ const githubReducers = (state, action) => {
         loading: false,
       };
 
+    case "GET_USER":
+      return {
+        ...state,
+        user: action.payload,
+        loading: false,
+      };
     case "SET_LOADING":
       return {
         ...state,
