@@ -19,6 +19,13 @@ const githubReducers = (state, action) => {
         loading: true,
       };
 
+    case "GET_REPOS":
+      return {
+        ...state,
+        repos: action.payload,
+        loading: false,
+      };
+
     case "CLEAR_USERS":
       return {
         ...state,

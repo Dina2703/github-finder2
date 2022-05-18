@@ -3,13 +3,15 @@ import { FaCodepen, FaStore, FaUserFriends, FaUsers } from "react-icons/fa";
 import Spinner from "../components/layout/Spinner";
 import GithubContext from "../context/github/GithubContext";
 import { useParams, Link } from "react-router-dom";
+import RepoList from "../components/repos/RepoList";
 
 function User() {
   const params = useParams();
-  const { getUser, user, loading } = useContext(GithubContext);
+  const { getUser, user, loading, getRepos, repos } = useContext(GithubContext);
   useEffect(() => {
     getUser(params.login);
-    console.log(user);
+    getRepos(params.login);
+    // console.log(user);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -33,6 +35,10 @@ function User() {
   if (loading) {
     return <Spinner />;
   }
+
+  // NOTE: check for valid url to users website
+
+  const websiteUrl = blog?.startsWith("http") ? blog : "https://" + blog;
   return (
     <>
       <div className="w-full mx-auto lg:w-10/12">
@@ -49,7 +55,7 @@ function User() {
               </figure>
               <div className="card-body justify-end">
                 <h2 className="card-title mb-0">{name}</h2>
-                <p>{login}</p>
+                <p className="flex-grow-0">{login}</p>
               </div>
             </div>
           </div>
@@ -85,12 +91,8 @@ function User() {
                 <div className="stat">
                   <div className="stat-title text-md">Website</div>
                   <div className="text-lg stat-value">
-                    <a
-                      href={`https://${blog}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {blog}
+                    <a href={websiteUrl} target="_blank" rel="noreferrer">
+                      {websiteUrl}
                     </a>
                   </div>
                 </div>
@@ -152,7 +154,7 @@ function User() {
             </div>
           </div>
         </div>
-        {/*<RepoList repos={repos} />*/}
+        <RepoList repos={repos} />
       </div>
     </>
   );

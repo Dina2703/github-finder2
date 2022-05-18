@@ -1,4 +1,5 @@
 import { createContext, useReducer } from "react";
+import { createRenderer } from "react-dom/test-utils";
 import githubReducers from "./GithubReducers";
 
 const GithubContext = createContext();
@@ -9,6 +10,7 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
   };
 
@@ -48,12 +50,36 @@ export const GithubProvider = ({ children }) => {
       window.location = "/notfound";
     } else {
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
       dispatch({
         type: "GET_USER",
         payload: data,
       });
     }
+  };
+
+  //get User repos
+  const getRepos = async (login) => {
+    setLoading();
+    const params = new URLSearchParams({
+      sort: "created",
+      per_page: 5,
+    });
+
+    const response = await fetch(
+      `${GITHUB_URL}/users/${login}/repos?${params}`,
+      {
+        headers: {
+          Authorization: `token ${GITHUB_TOKEN}`,
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    dispatch({
+      type: "GET_REPOS",
+      payload: data,
+    });
   };
 
   //clear users from state
@@ -67,9 +93,11 @@ export const GithubProvider = ({ children }) => {
         users: state.users,
         loading: state.loading,
         user: state.user,
+        repos: state.repos,
         searchUsers,
         clearUsers,
         getUser,
+        getRepos,
       }}
     >
       {children}
